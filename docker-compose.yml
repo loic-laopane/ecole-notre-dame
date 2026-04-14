@@ -1,0 +1,106 @@
+version: '3.9'
+
+# ═══════════════════════════════════════════════
+#  NDSL – Stack locale complète
+#  frontend  → http://localhost:3000
+#  api       → http://localhost:8000
+#  admin     → http://localhost:8000/admin
+#  pma       → http://localhost:8081
+# ═══════════════════════════════════════════════
+
+services:
+
+  # ── PostgreSQL ─────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: ndsl_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ndsl
+      POSTGRES_USER:     ndsl_user
+      POSTGRES_PASSWORD: ndsl_secret
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - ndsl_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ndsl_user -d ndsl"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── pgAdmin (PostgreSQL GUI) ────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ndsl_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL:    admin@ndsl.fr
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8081:80"
+    networks:
+      - ndsl_net
+    depends_on:
+      - db
+
+  # ── Symfony Backend ─────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ndsl_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV:      dev
+      APP_SECRET:   change_me_in_production
+      DATABASE_URL: postgresql://ndsl_user:ndsl_secret@db:5432/ndsl?serverVersion=16&charset=utf8
+      CORS_ALLOW_ORIGIN: "^https?://(localhost|127\\.0\\.0\\.1)(:[0-9]+)?$"
+      JWT_SECRET_KEY:    "%kernel.project_dir%/config/jwt/private.pem"
+      JWT_PUBLIC_KEY:    "%kernel.project_dir%/config/jwt/public.pem"
+      JWT_PASSPHRASE:    ndsl_jwt_passphrase
+    volumes:
+      - ./backend:/var/www/backend
+      - backend_vendor:/var/www/backend/vendor
+    ports:
+      - "8000:8000"
+    networks:
+      - ndsl_net
+
+  # ── Next.js Frontend ────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+    container_name: ndsl_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_URL:  http://backend:8000/api
+      NEXTAUTH_URL:         http://localhost:3000
+      NEXTAUTH_SECRET:      change_me_in_production
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+      - frontend_next:/app/.next
+    ports:
+      - "3000:3000"
+    networks:
+      - ndsl_net
+
+volumes:
+  db_data:
+  backend_vendor:
+  frontend_node_modules:
+  frontend_next:
+
+networks:
+  ndsl_net:
+    driver: bridge

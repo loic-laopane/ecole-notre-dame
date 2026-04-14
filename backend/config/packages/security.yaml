@@ -1,0 +1,51 @@
+security:
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        # Public API (lecture seule)
+        api_public:
+            pattern: ^/api/(actualites|evenements|etablissements)
+            stateless: true
+            security: false
+
+        # Auth routes (OAuth2)
+        api_auth:
+            pattern: ^/api/auth
+            stateless: false
+            custom_authenticators:
+                - App\Security\OAuthAuthenticator
+            logout:
+                path: api_auth_logout
+
+        # Protected API
+        api:
+            pattern: ^/api
+            stateless: true
+            jwt: ~
+
+        # EasyAdmin
+        main:
+            lazy: true
+            provider: app_user_provider
+            custom_authenticators:
+                - App\Security\OAuthAuthenticator
+            logout:
+                path: app_logout
+
+    access_control:
+        - { path: ^/admin,         roles: ROLE_ADMIN }
+        - { path: ^/api/docs,      roles: PUBLIC_ACCESS }
+        - { path: ^/api/auth,      roles: PUBLIC_ACCESS }
+        - { path: ^/api,           roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api,           roles: ROLE_ADMIN }

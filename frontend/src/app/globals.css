@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cream:  #faf7f2;
+  --navy:   #1c2b45;
+  --gold:   #c9a84c;
+  --gold2:  #e8cf85;
+  --sky:    #4e8fb8;
+  --rose:   #b86070;
+  --sage:   #7aaa8a;
+  --muted:  #7a7a8a;
+  --border: #e8e4dc;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+
+  h1, h2, h3, h4 {
+    @apply font-display text-navy leading-tight;
+  }
+}
+
+@layer components {
+  /* ── Tag / label ── */
+  .ndsl-tag {
+    @apply inline-flex items-center gap-1 text-gold text-[.7rem] font-semibold tracking-[.12em] uppercase mb-2;
+  }
+  .ndsl-tag::before {
+    content: '';
+    @apply block w-[18px] h-[1.5px] bg-gold flex-shrink-0;
+  }
+
+  /* ── Section divider ── */
+  .ndsl-divider {
+    @apply w-[46px] h-[2.5px] bg-gold my-4;
+  }
+  .ndsl-divider-center {
+    @apply w-[46px] h-[2.5px] bg-gold mx-auto my-4;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply inline-block bg-gold text-navy font-semibold text-[.86rem] tracking-[.04em] uppercase
+           px-[1.9rem] py-[.85rem] rounded-sm transition-all duration-200
+           hover:bg-gold2 hover:-translate-y-0.5 hover:shadow-lg;
+  }
+  .btn-outline-white {
+    @apply inline-block border border-white/40 text-white font-medium text-[.86rem] tracking-[.04em] uppercase
+           px-[1.9rem] py-[.85rem] rounded-sm transition-all duration-200
+           hover:border-white hover:bg-white/10;
+  }
+  .btn-dark {
+    @apply inline-block bg-navy text-white font-semibold text-[.88rem] tracking-[.05em] uppercase
+           px-[2.2rem] py-[.9rem] rounded-sm transition-colors duration-200
+           hover:bg-[#0f1a2e];
+  }
+  .btn-ghost-dark {
+    @apply inline-block border-[1.5px] border-navy text-navy font-medium text-[.88rem] tracking-[.05em] uppercase
+           px-[2.2rem] py-[.9rem] rounded-sm transition-all duration-200
+           hover:bg-navy hover:text-white;
+  }
+
+  /* ── Card base ── */
+  .ndsl-card {
+    @apply bg-white rounded-lg border border-border shadow-sm transition-all duration-300
+           hover:-translate-y-1 hover:shadow-lg hover:border-gold;
+  }
+
+  /* ── Event date badge ── */
+  .event-date-badge {
+    @apply bg-navy text-white rounded flex flex-col items-center justify-center
+           min-w-[44px] h-11 flex-shrink-0;
+  }
+}
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-25px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(25px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.animate-fade-up    { animation: fadeUp .6s ease both; }
+.animate-fade-left  { animation: fadeInLeft .8s ease both; }
+.animate-fade-right { animation: fadeInRight .8s ease both; }

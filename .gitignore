@@ -1,0 +1,33 @@
+# ── OS ──────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Editors ─────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ── Frontend ─────────────────────────────────
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# ── Backend ──────────────────────────────────
+backend/vendor/
+backend/.env
+backend/var/
+backend/config/jwt/
+!backend/config/jwt/.gitkeep
+
+# ── Docker volumes / overrides ───────────────
+docker-compose.override.yml
+.docker/
+
+# ── Misc ─────────────────────────────────────
+*.log
+*.map
+dist/

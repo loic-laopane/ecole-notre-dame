@@ -1,0 +1,16 @@
+knpu_oauth2_client:
+    clients:
+        google:
+            type: google
+            client_id: '%env(OAUTH_GOOGLE_CLIENT_ID)%'
+            client_secret: '%env(OAUTH_GOOGLE_CLIENT_SECRET)%'
+            redirect_route: api_auth_connect_google_check
+            redirect_params: {}
+
+        microsoft:
+            type: azure
+            client_id: '%env(OAUTH_MICROSOFT_CLIENT_ID)%'
+            client_secret: '%env(OAUTH_MICROSOFT_CLIENT_SECRET)%'
+            tenant: '%env(OAUTH_MICROSOFT_TENANT)%'
+            redirect_route: api_auth_connect_microsoft_check
+            redirect_params: {}
