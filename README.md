@@ -9,7 +9,7 @@ Site officiel de l'Ensemble Scolaire NDSL — Mantes-la-Jolie & Bonnières-sur-S
 | Frontend | Next.js 15 · App Router · TypeScript · Tailwind CSS |
 | Backend | Symfony 7 · API Platform 3 · EasyAdmin 4 |
 | Auth | OAuth2 (KnpU OAuth2 Bundle) · JWT |
-| Base de données | PostgreSQL 16 |
+| Base de données | MySQL 8.0 |
 | Infra locale | Docker Compose |
 | CI/CD | GitHub Actions |
 

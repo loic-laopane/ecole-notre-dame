@@ -1,50 +1,54 @@
 version: '3.9'
 
 # ═══════════════════════════════════════════════
-#  NDSL – Stack locale complète
-#  frontend  → http://localhost:3000
-#  api       → http://localhost:8000
-#  admin     → http://localhost:8000/admin
-#  pma       → http://localhost:8081
+#  NDSL – Stack locale
+#  frontend   → http://localhost:3000
+#  api        → http://localhost:8000
+#  admin      → http://localhost:8000/admin
+#  phpmyadmin → http://localhost:8081
 # ═══════════════════════════════════════════════
 
 services:
 
-  # ── PostgreSQL ─────────────────────────────
+  # ── MySQL 8 ────────────────────────────────
   db:
-    image: postgres:16-alpine
+    image: mysql:8.0
     container_name: ndsl_db
     restart: unless-stopped
     environment:
-      POSTGRES_DB:       ndsl
-      POSTGRES_USER:     ndsl_user
-      POSTGRES_PASSWORD: ndsl_secret
+      MYSQL_ROOT_PASSWORD: root_secret
+      MYSQL_DATABASE:      ndsl
+      MYSQL_USER:          ndsl_user
+      MYSQL_PASSWORD:      ndsl_secret
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/mysql
     ports:
-      - "5432:5432"
+      - "3306:3306"
     networks:
       - ndsl_net
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ndsl_user -d ndsl"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "ndsl_user", "-pndsl_secret"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # ── pgAdmin (PostgreSQL GUI) ────────────────
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: ndsl_pgadmin
+  # ── phpMyAdmin ─────────────────────────────
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: ndsl_pma
     restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
-      PGADMIN_DEFAULT_EMAIL:    admin@ndsl.fr
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PMA_HOST:     db
+      PMA_USER:     ndsl_user
+      PMA_PASSWORD: ndsl_secret
     ports:
       - "8081:80"
     networks:
       - ndsl_net
-    depends_on:
-      - db
 
   # ── Symfony Backend ─────────────────────────
   backend:
@@ -59,11 +63,12 @@ services:
     environment:
       APP_ENV:      dev
       APP_SECRET:   change_me_in_production
-      DATABASE_URL: postgresql://ndsl_user:ndsl_secret@db:5432/ndsl?serverVersion=16&charset=utf8
+      DATABASE_URL: "mysql://ndsl_user:ndsl_secret@db:3306/ndsl?serverVersion=8.0&charset=utf8mb4"
       CORS_ALLOW_ORIGIN: "^https?://(localhost|127\\.0\\.0\\.1)(:[0-9]+)?$"
-      JWT_SECRET_KEY:    "%kernel.project_dir%/config/jwt/private.pem"
-      JWT_PUBLIC_KEY:    "%kernel.project_dir%/config/jwt/public.pem"
-      JWT_PASSPHRASE:    ndsl_jwt_passphrase
+      JWT_SECRET_KEY: "%kernel.project_dir%/config/jwt/private.pem"
+      JWT_PUBLIC_KEY:  "%kernel.project_dir%/config/jwt/public.pem"
+      JWT_PASSPHRASE:  ndsl_jwt_passphrase
+      FRONTEND_URL:    http://localhost:3000
     volumes:
       - ./backend:/var/www/backend
       - backend_vendor:/var/www/backend/vendor
@@ -83,9 +88,9 @@ services:
     depends_on:
       - backend
     environment:
-      NEXT_PUBLIC_API_URL:  http://backend:8000/api
-      NEXTAUTH_URL:         http://localhost:3000
-      NEXTAUTH_SECRET:      change_me_in_production
+      NEXT_PUBLIC_API_URL: http://backend:8000/api
+      NEXTAUTH_URL:        http://localhost:3000
+      NEXTAUTH_SECRET:     change_me_in_production
     volumes:
       - ./frontend:/app
       - frontend_node_modules:/app/node_modules

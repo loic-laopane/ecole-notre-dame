@@ -36,18 +36,19 @@ jobs:
     name: Backend (Symfony)
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres:16-alpine
+      mysql:
+        image: mysql:8.0
         env:
-          POSTGRES_DB: ndsl_test
-          POSTGRES_USER: ndsl_user
-          POSTGRES_PASSWORD: ndsl_secret
+          MYSQL_ROOT_PASSWORD: root_secret
+          MYSQL_DATABASE:      ndsl_test
+          MYSQL_USER:          ndsl_user
+          MYSQL_PASSWORD:      ndsl_secret
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "mysqladmin ping -h localhost -u ndsl_user -pndsl_secret"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports: ["5432:5432"]
+        ports: ["3306:3306"]
     defaults:
       run:
         working-directory: backend
@@ -56,9 +57,13 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: pdo, pdo_pgsql, intl, mbstring, zip
+          extensions: pdo, pdo_mysql, intl, mbstring, zip
           coverage: none
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
       - name: Check PHP syntax
-        run: find src -name "*.php" -exec php -l {} \; | grep -v "No syntax errors"  || true
+        run: find src -name "*.php" | xargs -I{} php -l {} | grep -v "No syntax errors" || true
+      - name: Run migrations
+        env:
+          DATABASE_URL: "mysql://ndsl_user:ndsl_secret@127.0.0.1:3306/ndsl_test?serverVersion=8.0&charset=utf8mb4"
+        run: php bin/console doctrine:migrations:migrate --no-interaction --env=test || true
