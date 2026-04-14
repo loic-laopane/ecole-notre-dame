@@ -5,11 +5,11 @@ WORKDIR /var/www/backend
 # System deps
 RUN apk add --no-cache \
     git curl unzip bash \
-    mysql-dev icu-dev oniguruma-dev libzip-dev
+    postgresql-dev icu-dev oniguruma-dev libzip-dev
 
 # PHP extensions
 RUN docker-php-ext-install \
-    pdo pdo_mysql intl mbstring zip opcache
+    pdo pdo_pgsql intl mbstring zip opcache
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

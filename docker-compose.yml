@@ -5,46 +5,43 @@ version: '3.9'
 #  frontend   → http://localhost:3000
 #  api        → http://localhost:8000
 #  admin      → http://localhost:8000/admin
-#  phpmyadmin → http://localhost:8081
+#  pgadmin    → http://localhost:8081
 # ═══════════════════════════════════════════════
 
 services:
 
-  # ── MySQL 8 ────────────────────────────────
+  # ── PostgreSQL 16 ──────────────────────────
   db:
-    image: mysql:8.0
+    image: postgres:16-alpine
     container_name: ndsl_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root_secret
-      MYSQL_DATABASE:      ndsl
-      MYSQL_USER:          ndsl_user
-      MYSQL_PASSWORD:      ndsl_secret
+      POSTGRES_DB:       ndsl
+      POSTGRES_USER:     ndsl_user
+      POSTGRES_PASSWORD: ndsl_secret
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/postgresql/data
     ports:
-      - "3306:3306"
+      - "5432:5432"
     networks:
       - ndsl_net
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "ndsl_user", "-pndsl_secret"]
+      test: ["CMD-SHELL", "pg_isready -U ndsl_user -d ndsl"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # ── phpMyAdmin ─────────────────────────────
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: ndsl_pma
+  # ── pgAdmin ────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ndsl_pgadmin
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     environment:
-      PMA_HOST:     db
-      PMA_USER:     ndsl_user
-      PMA_PASSWORD: ndsl_secret
+      PGADMIN_DEFAULT_EMAIL:    admin@ndsl.fr
+      PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - "8081:80"
     networks:
@@ -63,7 +60,7 @@ services:
     environment:
       APP_ENV:      dev
       APP_SECRET:   change_me_in_production
-      DATABASE_URL: "mysql://ndsl_user:ndsl_secret@db:3306/ndsl?serverVersion=8.0&charset=utf8mb4"
+      DATABASE_URL: "postgresql://ndsl_user:ndsl_secret@db:5432/ndsl?serverVersion=16&charset=utf8"
       CORS_ALLOW_ORIGIN: "^https?://(localhost|127\\.0\\.0\\.1)(:[0-9]+)?$"
       JWT_SECRET_KEY: "%kernel.project_dir%/config/jwt/private.pem"
       JWT_PUBLIC_KEY:  "%kernel.project_dir%/config/jwt/public.pem"
