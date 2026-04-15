@@ -50,16 +50,22 @@ export default function HeroSection({ etablissements }: Props) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+          {/* "Découvrir l'école" → page établissements */}
           <Link href="/etablissements" className="btn-primary text-center">
             Découvrir l'école
           </Link>
+          {/* Scroll anchor vers la section établissements sur la page d'accueil */}
           <Link href="#etablissements" className="btn-outline-white text-center">
             Nos établissements
           </Link>
         </div>
 
         <div className="flex flex-wrap gap-4 mt-9">
-          {['Sous contrat avec l\'État', '95% de réussite au bac', 'Maternelle → Lycée'].map(b => (
+          {[
+            'Sous contrat avec l\'État',
+            '95% de réussite au bac',
+            'Maternelle → Lycée',
+          ].map((b) => (
             <span key={b} className="flex items-center gap-2 text-white/58 text-[.76rem]">
               <span className="text-gold font-bold">✓</span>{b}
             </span>
@@ -91,17 +97,26 @@ export default function HeroSection({ etablissements }: Props) {
               </Link>
             ))}
           </div>
+          {/* Lien "Voir tous les établissements" */}
+          <Link
+            href="/etablissements"
+            className="block mt-3 pt-3 border-t border-border text-[.76rem] text-sky
+                       font-semibold uppercase tracking-[.04em] hover:text-navy transition-colors"
+          >
+            Tous les établissements →
+          </Link>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3">
           {[
-            { num: '1 800', lbl: 'Élèves',        hl: false },
-            { num: '95%',   lbl: 'Réussite bac',  hl: true  },
-            { num: '180',   lbl: 'Enseignants',    hl: false },
-            { num: '120',   lbl: 'Ans d\'histoire',hl: false },
+            { num: '1 800', lbl: 'Élèves',         hl: false },
+            { num: '95%',   lbl: 'Réussite bac',   hl: true  },
+            { num: '180',   lbl: 'Enseignants',     hl: false },
+            { num: '120',   lbl: 'Ans d\'histoire', hl: false },
           ].map(({ num, lbl, hl }) => (
-            <div key={lbl}
+            <div
+              key={lbl}
               className={`rounded-xl p-4 text-center border shadow-sm
                 ${hl
                   ? 'bg-navy border-navy'
