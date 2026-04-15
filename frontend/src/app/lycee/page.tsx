@@ -38,7 +38,7 @@ export default function LyceePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[['95%', 'Taux bac'], ['2nde → Tle', '3 niveaux'], ['FCE & ELYTE', 'Certifications'], ['Parcoursup', 'Orientation']].map(([v, l]) => (
               <div key={v} className="bg-navy text-center rounded-xl p-5">
-                <div className="font-display text-gold text-xl font-bold">{v}</div>
+                <div className="font-display text-white text-xl font-bold">{v}</div>
                 <div className="text-white/50 text-[.7rem] uppercase tracking-wide mt-1">{l}</div>
               </div>
             ))}

@@ -73,7 +73,7 @@ export default function ProgrammesSection({ etablissements }: { etablissements: 
               <div className="text-[2rem] mb-3">{card.icon}</div>
               <h3 className="text-[1.2rem] mb-2">{card.title}</h3>
               <p className="text-[.8rem] leading-relaxed mb-3">{card.desc}</p>
-              <span className="text-[.67rem] uppercase tracking-[.08em] text-gold font-semibold">
+              <span className="text-[.67rem] uppercase tracking-[.08em] text-sky font-semibold">
                 {NIVEAU_LABEL[card.niveau] ?? card.niveau}
               </span>
             </div>

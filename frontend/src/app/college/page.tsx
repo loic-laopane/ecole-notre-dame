@@ -37,8 +37,8 @@ export default function CollegePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[['6ème – 3ème', '4 niveaux'], ['Latin & LV2', 'Options'], ['Pastorale', 'Vie spirituelle'], ['AS & projets', 'Activités']].map(([v, l]) => (
               <div key={v} className="bg-navy text-center rounded-xl p-5">
-                <div className="font-display text-gold text-xl font-bold">{v}</div>
-                <div className="text-white/50 text-[.7rem] uppercase tracking-wide mt-1">{l}</div>
+                <div className="font-display text-white text-xl font-bold">{v}</div>
+                <div className="text-white/60 text-[.7rem] uppercase tracking-wide mt-1">{l}</div>
               </div>
             ))}
           </div>
