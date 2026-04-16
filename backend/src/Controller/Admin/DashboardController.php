@@ -85,9 +85,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud('Horaires', 'fa fa-clock', Page::class)
                 ->setController(InfosPratiquesCrudController::class)
                 ->setQueryParameter('filters[subsection][value]', 'horaires'),
-            MenuItem::linkToCrud('Accès', 'fa fa-map-marker-alt', Page::class)
-                ->setController(InfosPratiquesCrudController::class)
-                ->setQueryParameter('filters[subsection][value]', 'acces'),
+            MenuItem::linkToRoute('Accès', 'fa fa-map-marker-alt', 'admin_acces_page'),
             MenuItem::linkToCrud('Inscriptions', 'fa fa-pen', Page::class)
                 ->setController(InfosPratiquesCrudController::class)
                 ->setQueryParameter('filters[subsection][value]', 'inscriptions'),

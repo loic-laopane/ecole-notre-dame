@@ -136,7 +136,7 @@
 
 #main-menu .menu .menu-item a:hover .menu-item-label,
 #main-menu .menu .menu-item a:hover {
-  color: #fff !important;
+  color: #a8b8cc !important;
 }
 
 #main-menu .menu .menu-item.active a,
@@ -151,11 +151,26 @@
   color: var(--ndsl-navy) !important;
 }
 
-/* Sous-menus */
-#main-menu .menu .menu-item .submenu .menu-item-contents,
-#main-menu .menu .menu-item .submenu .menu-item-label {
+/* Sous-menus — items normaux */
+#main-menu .menu .menu-item .submenu .dropdown-item,
+#main-menu .menu .menu-item .submenu .dropdown-appearance-item {
   color: rgba(255,255,255,.75) !important;
   font-size: .82rem !important;
+  border-radius: 6px !important;
+  margin: 1px 6px !important;
+}
+
+#main-menu .menu .menu-item .submenu .dropdown-item:hover {
+  background: rgba(0,0,0,.15) !important;
+  color: #a8b8cc !important;
+}
+
+/* Sous-menus — item actif : même style que Tableau de bord */
+#main-menu .menu .menu-item .submenu .dropdown-item.active,
+#main-menu .menu .menu-item .submenu .dropdown-appearance-item.active {
+  background: rgba(201,168,76,.35) !important;
+  color: var(--ndsl-navy) !important;
+  font-weight: 600 !important;
 }
 
 /* Titres de section */
