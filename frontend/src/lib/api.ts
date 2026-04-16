@@ -65,7 +65,7 @@ async function apiFetch<T>(
       ...options,
     })
     if (!res.ok) return null
-    return res.json() as Promise<T>
+    return await res.json() as T
   } catch {
     return null
   }
