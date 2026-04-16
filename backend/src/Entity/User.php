@@ -4,12 +4,13 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\HasLifecycleCallbacks]
-class User implements UserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const ROLE_USER        = 'ROLE_USER';
     public const ROLE_PARENT      = 'ROLE_PARENT';
@@ -35,6 +36,9 @@ class User implements UserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $password = null;
 
     /** OAuth2 provider: google | microsoft */
     #[ORM\Column(length: 50, nullable: true)]
@@ -66,6 +70,9 @@ class User implements UserInterface
         $roles[] = self::ROLE_USER;
         return array_unique($roles);
     }
+
+    public function getPassword(): ?string { return $this->password; }
+    public function setPassword(?string $password): static { $this->password = $password; return $this; }
 
     public function eraseCredentials(): void {}
 

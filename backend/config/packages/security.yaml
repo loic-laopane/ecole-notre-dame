@@ -40,10 +40,19 @@ security:
             provider: app_user_provider
             custom_authenticators:
                 - App\Security\OAuthAuthenticator
+            form_login:
+                login_path: admin_login
+                check_path: admin_login
+                default_target_path: admin
+                username_parameter: email
+                password_parameter: password
+            entry_point: form_login
             logout:
                 path: app_logout
 
     access_control:
+        - { path: ^/admin/login,   roles: PUBLIC_ACCESS }
+        - { path: ^/admin/auth,    roles: PUBLIC_ACCESS }
         - { path: ^/admin,         roles: ROLE_ADMIN }
         - { path: ^/api/docs,      roles: PUBLIC_ACCESS }
         - { path: ^/api/auth,      roles: PUBLIC_ACCESS }

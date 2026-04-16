@@ -31,6 +31,7 @@ class OAuthAuthenticator extends OAuth2Authenticator
         return in_array($request->attributes->get('_route'), [
             'connect_google_check',
             'connect_microsoft_check',
+            'admin_connect_google_check',
         ]);
     }
 
@@ -84,7 +85,10 @@ class OAuthAuthenticator extends OAuth2Authenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        // Redirect to frontend after successful OAuth login
+        if ($firewallName === 'main') {
+            return new RedirectResponse($this->router->generate('admin'));
+        }
+
         $frontendUrl = $_ENV['FRONTEND_URL'] ?? 'http://localhost:3000';
         return new RedirectResponse($frontendUrl . '/auth/callback');
     }
