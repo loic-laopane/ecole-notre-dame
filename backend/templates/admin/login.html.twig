@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Connexion — Administration NDSL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'DM Sans', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            background: linear-gradient(135deg, #1c2b45 0%, #243456 60%, #2a3f64 100%);
+        }
+        .panel-left {
+            display: none;
+            flex: 1;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            flex-direction: column;
+            color: rgba(255,255,255,.85);
+        }
+        @media(min-width: 900px) { .panel-left { display: flex; } }
+        .panel-left .brand { display: flex; align-items: center; gap: 1rem; margin-bottom: 3rem; }
+        .panel-left .brand img { height: 56px; filter: brightness(0) invert(1); }
+        .panel-left .brand-text h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem; font-weight: 600;
+            color: #fff; margin: 0; line-height: 1.2;
+        }
+        .panel-left .brand-text span { font-size: .8rem; color: rgba(255,255,255,.55); text-transform: uppercase; letter-spacing: .08em; }
+        .panel-left .tagline { font-size: 1.1rem; font-weight: 300; text-align: center; max-width: 340px; line-height: 1.7; color: rgba(255,255,255,.65); }
+        .panel-left .features { margin-top: 2.5rem; display: flex; flex-direction: column; gap: .75rem; }
+        .feature-item { display: flex; align-items: center; gap: .75rem; font-size: .875rem; color: rgba(255,255,255,.65); }
+        .feature-item i { color: #c9a84c; width: 18px; }
+        .panel-right { display: flex; align-items: center; justify-content: center; padding: 2rem; width: 100%; }
+        @media(min-width: 900px) { .panel-right { width: 440px; flex-shrink: 0; } }
+        .login-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%; max-width: 400px;
+            box-shadow: 0 24px 64px rgba(0,0,0,.25);
+        }
+        .login-logo { display: flex; align-items: center; gap: .875rem; margin-bottom: 2rem; }
+        .login-logo img { height: 44px; }
+        .login-logo-text h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem; font-weight: 600;
+            color: #1c2b45; margin: 0; line-height: 1.2;
+        }
+        .login-logo-text span { font-size: .72rem; color: #7a7a8a; text-transform: uppercase; letter-spacing: .07em; }
+        h3 { font-size: 1.1rem; font-weight: 600; color: #1c2b45; margin: 0 0 .35rem; }
+        .subtitle { font-size: .85rem; color: #7a7a8a; margin-bottom: 1.75rem; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; font-size: .8rem; font-weight: 500; color: #1c2b45; margin-bottom: .35rem; }
+        input[type=email], input[type=password] {
+            width: 100%; padding: .65rem .9rem;
+            border: 1.5px solid #e8e4dc; border-radius: 8px;
+            font-size: .9rem; font-family: inherit;
+            outline: none; transition: border-color .15s, box-shadow .15s;
+        }
+        input:focus { border-color: #c9a84c; box-shadow: 0 0 0 3px rgba(201,168,76,.15); }
+        .error-msg { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: .65rem .9rem; font-size: .82rem; color: #b0413e; margin-bottom: 1rem; }
+        .btn-login {
+            width: 100%; padding: .7rem;
+            background: #1c2b45; color: #fff;
+            border: none; border-radius: 8px;
+            font-size: .9rem; font-weight: 600;
+            font-family: inherit; cursor: pointer;
+            transition: background .15s;
+        }
+        .btn-login:hover { background: #243456; }
+        .divider { display: flex; align-items: center; gap: .75rem; margin: 1.25rem 0; color: #c8c4bc; font-size: .78rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid #e8e4dc; }
+        .btn-google {
+            width: 100%; padding: .65rem;
+            background: #fff; color: #1c2b45;
+            border: 1.5px solid #e8e4dc; border-radius: 8px;
+            font-size: .875rem; font-weight: 500;
+            font-family: inherit; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: .6rem;
+            transition: border-color .15s, box-shadow .15s;
+            text-decoration: none;
+        }
+        .btn-google:hover { border-color: #c9a84c; box-shadow: 0 2px 8px rgba(201,168,76,.15); color: #1c2b45; }
+        .footer-note { text-align: center; font-size: .75rem; color: #a0a0b0; margin-top: 1.5rem; }
+    </style>
+</head>
+<body>
+    <div class="panel-left">
+        <div class="brand">
+            <img src="/images/logo.png" alt="NDSL">
+            <div class="brand-text">
+                <h1>Notre-Dame<br>Saint-Louis</h1>
+                <span>Mantes-la-Jolie</span>
+            </div>
+        </div>
+        <p class="tagline">Espace d'administration du site de l'ensemble scolaire Notre-Dame Saint-Louis.</p>
+        <div class="features">
+            <div class="feature-item"><i class="fa fa-newspaper"></i> Gestion des actualités</div>
+            <div class="feature-item"><i class="fa fa-calendar"></i> Calendrier des événements</div>
+            <div class="feature-item"><i class="fa fa-building"></i> Fiches établissements</div>
+            <div class="feature-item"><i class="fa fa-users"></i> Gestion des utilisateurs</div>
+        </div>
+    </div>
+
+    <div class="panel-right">
+        <div class="login-box">
+            <div class="login-logo">
+                <img src="/images/logo.png" alt="NDSL">
+                <div class="login-logo-text">
+                    <h2>Notre-Dame<br>Saint-Louis</h2>
+                    <span>Administration</span>
+                </div>
+            </div>
+
+            <h3>Connexion</h3>
+            <p class="subtitle">Accès réservé aux administrateurs</p>
+
+            {% if error is defined and error %}
+                <div class="error-msg"><i class="fa fa-exclamation-circle"></i> {{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            <form method="post">
+                <div class="form-group">
+                    <label for="email">Adresse e-mail</label>
+                    <input type="email" id="email" name="email" value="{{ last_username ?? '' }}" required autofocus placeholder="admin@exemple.fr">
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                </div>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <button type="submit" class="btn-login">Se connecter</button>
+            </form>
+
+            <div class="divider">ou</div>
+
+            <a href="{{ path('admin_connect_google_start') }}" class="btn-google">
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Continuer avec Google
+            </a>
+
+            <p class="footer-note">Ensemble Scolaire Notre-Dame Saint-Louis · Mantes-la-Jolie</p>
+        </div>
+    </div>
+</body>
+</html>

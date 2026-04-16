@@ -1,0 +1,146 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}Tableau de bord{% endblock %}
+
+{% block main %}
+<div class="mb-4">
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:#1c2b45;margin-bottom:.25rem;">
+        Tableau de bord
+    </h2>
+    <p style="color:#7a7a8a;font-size:.875rem;margin:0;">Gérez le contenu du site Notre-Dame Saint-Louis.</p>
+</div>
+
+{# Stats #}
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\ActualiteCrudController') }}" class="ndsl-stat-card">
+            <div class="ndsl-stat-icon navy"><i class="fa fa-newspaper"></i></div>
+            <div>
+                <div class="ndsl-stat-value">{{ stats.actualites }}</div>
+                <div class="ndsl-stat-label">Actualités</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\ActualiteCrudController') }}" class="ndsl-stat-card">
+            <div class="ndsl-stat-icon sage"><i class="fa fa-check-circle"></i></div>
+            <div>
+                <div class="ndsl-stat-value">{{ stats.publiees }}</div>
+                <div class="ndsl-stat-label">Publiées</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\EvenementCrudController') }}" class="ndsl-stat-card">
+            <div class="ndsl-stat-icon gold"><i class="fa fa-calendar"></i></div>
+            <div>
+                <div class="ndsl-stat-value">{{ stats.evenements }}</div>
+                <div class="ndsl-stat-label">Événements</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\UserCrudController') }}" class="ndsl-stat-card">
+            <div class="ndsl-stat-icon sky"><i class="fa fa-users"></i></div>
+            <div>
+                <div class="ndsl-stat-value">{{ stats.users }}</div>
+                <div class="ndsl-stat-label">Utilisateurs</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+{# Actions rapides #}
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <h6 style="font-weight:600;color:#1c2b45;text-transform:uppercase;font-size:.7rem;letter-spacing:.08em;margin-bottom:.75rem;">Actions rapides</h6>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\ActualiteCrudController').setAction('new') }}" class="ndsl-action-card">
+            <div class="icon">📝</div>
+            <div class="title">Nouvelle actualité</div>
+            <div class="subtitle">Rédiger un article</div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\EvenementCrudController').setAction('new') }}" class="ndsl-action-card">
+            <div class="icon">📅</div>
+            <div class="title">Nouvel événement</div>
+            <div class="subtitle">Ajouter au calendrier</div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ ea_url().setController('App\\Controller\\Admin\\EtablissementCrudController') }}" class="ndsl-action-card">
+            <div class="icon">🏫</div>
+            <div class="title">Établissements</div>
+            <div class="subtitle">{{ stats.etablissements }} école(s)</div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="/" target="_blank" class="ndsl-action-card">
+            <div class="icon">🌐</div>
+            <div class="title">Voir le site</div>
+            <div class="subtitle">Ouvrir dans un onglet</div>
+        </a>
+    </div>
+</div>
+
+{# Dernières actualités + Prochains événements #}
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Dernières actualités</span>
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\ActualiteCrudController') }}" style="font-size:.8rem;color:#c9a84c;">Voir tout →</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recentes is empty %}
+                    <p class="text-muted p-3 mb-0" style="font-size:.875rem;">Aucune actualité pour l'instant.</p>
+                {% else %}
+                    <ul class="list-group list-group-flush">
+                    {% for a in recentes %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-size:.875rem;">
+                            <div>
+                                <span class="fw-medium">{{ a.title|slice(0,45) }}{% if a.title|length > 45 %}…{% endif %}</span>
+                                {% if a.category %}<span class="badge ms-1" style="background:#e8e4dc;color:#1c2b45;font-size:.65rem;">{{ a.category }}</span>{% endif %}
+                            </div>
+                            {% if a.published %}
+                                <span class="badge bg-success" style="font-size:.65rem;">Publié</span>
+                            {% else %}
+                                <span class="badge bg-secondary" style="font-size:.65rem;">Brouillon</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Prochains événements</span>
+                <a href="{{ ea_url().setController('App\\Controller\\Admin\\EvenementCrudController') }}" style="font-size:.8rem;color:#c9a84c;">Voir tout →</a>
+            </div>
+            <div class="card-body p-0">
+                {% if prochains is empty %}
+                    <p class="text-muted p-3 mb-0" style="font-size:.875rem;">Aucun événement à venir.</p>
+                {% else %}
+                    <ul class="list-group list-group-flush">
+                    {% for e in prochains %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center" style="font-size:.875rem;">
+                            <div>
+                                <span class="fw-medium">{{ e.title|slice(0,40) }}{% if e.title|length > 40 %}…{% endif %}</span>
+                                {% if e.location %}<span class="d-block" style="font-size:.75rem;color:#7a7a8a;">📍 {{ e.location }}</span>{% endif %}
+                            </div>
+                            <span style="font-size:.75rem;color:#7a7a8a;white-space:nowrap;">{{ e.eventDate|date('d/m/Y') }}</span>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
