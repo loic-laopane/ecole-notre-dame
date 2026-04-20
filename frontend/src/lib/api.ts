@@ -62,7 +62,7 @@ async function apiFetch<T>(
 ): Promise<T | null> {
   try {
     const res = await fetch(`${API_URL}${path}`, {
-      headers: { Accept: 'application/json', ...options?.headers },
+      headers: { Accept: 'application/ld+json', ...options?.headers },
       ...options,
     })
     if (!res.ok) return null
