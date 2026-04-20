@@ -5,13 +5,6 @@ import { getEtablissements, MOCK_ETABLISSEMENTS, NIVEAU_LABELS } from '@/lib/api
 
 export const revalidate = 3600
 
-const DOT_CLASSES: Record<string, string> = {
-  sky:  'bg-sky',
-  sage: 'bg-sage',
-  gold: 'bg-gold',
-  navy: 'bg-navy',
-}
-
 export default async function EtablissementsPage() {
   const items = await getEtablissements()
   const etablissements = items.length > 0 ? items : MOCK_ETABLISSEMENTS
@@ -45,7 +38,7 @@ export default async function EtablissementsPage() {
                   <div className="text-4xl flex-shrink-0">{etab.icon ?? '🏫'}</div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${DOT_CLASSES[etab.colorDot ?? ''] ?? 'bg-gold'}`} />
+                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: etab.colorDot ?? '#c8a951' }} />
                       <span className="text-[.7rem] text-muted uppercase tracking-[.08em] font-semibold">
                         {NIVEAU_LABELS[etab.niveau] ?? etab.niveau}
                       </span>

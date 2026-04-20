@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import PageLayout from '@/components/layout/PageLayout'
 import PageHero from '@/components/ui/PageHero'
 import Link from 'next/link'
-import { getEtablissement, MOCK_ETABLISSEMENTS, NIVEAU_LABELS } from '@/lib/api'
+import { getEtablissement, getEtablissements, MOCK_ETABLISSEMENTS, NIVEAU_LABELS } from '@/lib/api'
 
 export const revalidate = 3600
 
@@ -112,5 +112,7 @@ export default async function EtablissementDetailPage({ params }: Props) {
 }
 
 export async function generateStaticParams() {
-  return MOCK_ETABLISSEMENTS.map((e) => ({ slug: e.slug }))
+  const items = await getEtablissements()
+  const list = items.length > 0 ? items : MOCK_ETABLISSEMENTS
+  return list.map((e) => ({ slug: e.slug }))
 }

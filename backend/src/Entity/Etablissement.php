@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -19,6 +22,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
     order: ['position' => 'ASC'],
     paginationEnabled: false,
 )]
+#[ApiFilter(BooleanFilter::class, properties: ['actif'])]
+#[ApiFilter(SearchFilter::class, properties: ['slug' => 'exact'])]
 class Etablissement
 {
     public const NIVEAU_MATERNELLE  = 'maternelle';
@@ -56,7 +61,7 @@ class Etablissement
     private ?string $excerpt = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['etab:read'])]
+    #[Groups(['etab:list', 'etab:read'])]
     private ?string $content = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -91,6 +96,9 @@ class Etablissement
     #[Groups(['etab:list'])]
     private int $position = 0;
 
+    #[ORM\Column(options: ['default' => true])]
+    private bool $actif = true;
+
     public function getId(): ?int { return $this->id; }
     public function getName(): ?string { return $this->name; }
     public function setName(string $name): static { $this->name = $name; return $this; }
@@ -118,4 +126,6 @@ class Etablissement
     public function setFeaturedImage(?string $featuredImage): static { $this->featuredImage = $featuredImage; return $this; }
     public function getPosition(): int { return $this->position; }
     public function setPosition(int $position): static { $this->position = $position; return $this; }
+    public function isActif(): bool { return $this->actif; }
+    public function setActif(bool $actif): static { $this->actif = $actif; return $this; }
 }

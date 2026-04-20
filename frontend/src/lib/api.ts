@@ -44,6 +44,7 @@ export interface Etablissement {
   icon: string | null
   featuredImage: string | null
   position: number
+  actif: boolean
 }
 
 interface HydraCollection<T> {
@@ -61,7 +62,7 @@ async function apiFetch<T>(
 ): Promise<T | null> {
   try {
     const res = await fetch(`${API_URL}${path}`, {
-      headers: { Accept: 'application/json', ...options?.headers },
+      headers: { Accept: 'application/ld+json', ...options?.headers },
       ...options,
     })
     if (!res.ok) return null
@@ -138,7 +139,7 @@ export async function getEvenement(slug: string): Promise<Evenement | null> {
 
 export async function getEtablissements(): Promise<Etablissement[]> {
   const data = await apiFetch<HydraCollection<Etablissement>>(
-    '/etablissements',
+    '/etablissements?actif=true',
     { next: { revalidate: 3600, tags: ['etablissements'] } },
   )
   return data?.['hydra:member'] ?? []
@@ -146,7 +147,7 @@ export async function getEtablissements(): Promise<Etablissement[]> {
 
 export async function getEtablissement(slug: string): Promise<Etablissement | null> {
   const data = await apiFetch<HydraCollection<Etablissement>>(
-    `/etablissements?slug=${encodeURIComponent(slug)}`,
+    `/etablissements?slug=${encodeURIComponent(slug)}&actif=true`,
     { next: { revalidate: 3600, tags: [`etablissement-${slug}`] } },
   )
   return data?.['hydra:member']?.[0] ?? null
@@ -217,8 +218,8 @@ export const MOCK_EVENEMENTS: Evenement[] = [
 ]
 
 export const MOCK_ETABLISSEMENTS: Etablissement[] = [
-  { id: 1, name: 'École Maternelle Notre-Dame', slug: 'maternelle', niveau: 'maternelle', excerpt: 'Un cadre bienveillant pour l\'éveil et l\'épanouissement des tout-petits, de la PS à la GS.', address: '20, rue Saint-Fiacre', city: 'Mantes-la-Jolie', phone: '01 34 97 97 95', email: 'ecolend@ndsl78.fr', colorDot: 'sky', icon: '🌸', featuredImage: null, position: 1 },
-  { id: 2, name: 'École Élémentaire Saint-Louis', slug: 'elementaire', niveau: 'elementaire', excerpt: 'Des fondamentaux solides et une ouverture sur le monde dès le primaire, du CP au CM2.', address: '23, rue G. Herrewyn', city: 'Bonnières-sur-Seine', phone: '01 30 93 01 21', email: 'ecolesl@ndsl78.fr', colorDot: 'sage', icon: '📖', featuredImage: null, position: 2 },
-  { id: 3, name: 'Collège Notre-Dame', slug: 'college', niveau: 'college', excerpt: 'Accompagnement individualisé et projets innovants pour chaque collégien, de la 6ème à la 3ème.', address: '5, rue de la Sangle', city: 'Mantes-la-Jolie', phone: '01 34 97 97 97', email: 'accueilnd@ndsl78.fr', colorDot: 'gold', icon: '🔬', featuredImage: null, position: 3 },
-  { id: 4, name: 'Lycée Notre-Dame Saint-Louis', slug: 'lycee', niveau: 'lycee', excerpt: '95% de réussite au bac. Voie générale avec spécialités variées et certifications internationales.', address: '5, rue de la Sangle', city: 'Mantes-la-Jolie', phone: '01 34 97 97 97', email: 'accueilnd@ndsl78.fr', colorDot: 'navy', icon: '🎓', featuredImage: null, position: 4 },
+  { id: 1, name: 'École Maternelle Notre-Dame', slug: 'maternelle', niveau: 'maternelle', excerpt: 'Un cadre bienveillant pour l\'éveil et l\'épanouissement des tout-petits, de la PS à la GS.', address: '20, rue Saint-Fiacre', city: 'Mantes-la-Jolie', phone: '01 34 97 97 95', email: 'ecolend@ndsl78.fr', colorDot: 'sky', icon: '🌸', featuredImage: null, position: 1, actif: true },
+  { id: 2, name: 'École Élémentaire Saint-Louis', slug: 'elementaire', niveau: 'elementaire', excerpt: 'Des fondamentaux solides et une ouverture sur le monde dès le primaire, du CP au CM2.', address: '23, rue G. Herrewyn', city: 'Bonnières-sur-Seine', phone: '01 30 93 01 21', email: 'ecolesl@ndsl78.fr', colorDot: 'sage', icon: '📖', featuredImage: null, position: 2, actif: true },
+  { id: 3, name: 'Collège Notre-Dame', slug: 'college', niveau: 'college', excerpt: 'Accompagnement individualisé et projets innovants pour chaque collégien, de la 6ème à la 3ème.', address: '5, rue de la Sangle', city: 'Mantes-la-Jolie', phone: '01 34 97 97 97', email: 'accueilnd@ndsl78.fr', colorDot: 'gold', icon: '🔬', featuredImage: null, position: 3, actif: true },
+  { id: 4, name: 'Lycée Notre-Dame Saint-Louis', slug: 'lycee', niveau: 'lycee', excerpt: '95% de réussite au bac. Voie générale avec spécialités variées et certifications internationales.', address: '5, rue de la Sangle', city: 'Mantes-la-Jolie', phone: '01 34 97 97 97', email: 'accueilnd@ndsl78.fr', colorDot: 'navy', icon: '🎓', featuredImage: null, position: 4, actif: true },
 ]
