@@ -18,7 +18,8 @@ frontend/.env.*.local
 
 # ── Backend ──────────────────────────────────
 backend/vendor/
-backend/.env
+backend/.env.local
+backend/.env.*.local
 backend/var/
 backend/config/jwt/
 !backend/config/jwt/.gitkeep
