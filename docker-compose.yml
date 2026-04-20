@@ -58,7 +58,6 @@ services:
     environment:
       APP_ENV:      dev
       APP_SECRET:   change_me_in_production
-      DATABASE_URL: "postgresql://ndsl_user:ndsl_secret@db:5432/ndsl?serverVersion=16&charset=utf8"
       CORS_ALLOW_ORIGIN: "^https?://(localhost|127\\.0\\.0\\.1)(:[0-9]+)?$"
       JWT_SECRET_KEY: "%kernel.project_dir%/config/jwt/private.pem"
       JWT_PUBLIC_KEY:  "%kernel.project_dir%/config/jwt/public.pem"
