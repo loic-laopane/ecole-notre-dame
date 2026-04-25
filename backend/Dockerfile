@@ -1,21 +1,3 @@
-# ── Stage 1 : build Composer ─────────────────────────────────────────────
-FROM composer:2 AS vendor
-
-WORKDIR /app
-
-# Copier uniquement les fichiers de dépendances pour profiter du cache Docker
-COPY composer.json composer.lock* ./
-
-# Installer les dépendances de production
-# --ignore-platform-reqs : évite les erreurs d'extensions manquantes dans l'image Composer
-RUN composer install \
-    --no-dev \
-    --no-interaction \
-    --prefer-dist \
-    --optimize-autoloader \
-    --ignore-platform-reqs
-
-# ── Stage 2 : image finale ───────────────────────────────────────────────
 FROM php:8.3-cli-alpine
 
 WORKDIR /var/www/backend
@@ -29,28 +11,33 @@ RUN apk add --no-cache \
 RUN docker-php-ext-install \
     pdo pdo_pgsql intl mbstring zip opcache
 
-# OPcache production
-RUN { \
-    echo 'opcache.enable=1'; \
-    echo 'opcache.memory_consumption=128'; \
-    echo 'opcache.max_accelerated_files=10000'; \
-    echo 'opcache.validate_timestamps=0'; \
-} >> /usr/local/etc/php/conf.d/opcache.ini
+# Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Copier le code source
+# Copier composer.json/lock
+COPY composer.json composer.lock* ./
+
+# Étape 1 : installer sans scripts applicatifs
+# SYMFONY_SKIP_SCRIPTS=1 désactive cache:clear et assets:install
+# mais laisse tourner les plugins (symfony/runtime → autoload_runtime.php)
+RUN SYMFONY_SKIP_SCRIPTS=1 APP_ENV=prod composer install \
+    --no-dev \
+    --no-interaction \
+    --prefer-dist \
+    --optimize-autoloader
+
+# Copier le reste du code
 COPY . .
 
-# Copier le vendor/ depuis le stage de build
-# (on est sûr qu'il est complet et optimisé)
-COPY --from=vendor /app/vendor ./vendor
+# Vérification
+RUN ls vendor/autoload*.php && echo "✅ Autoload files OK"
 
-# Permissions sur var/
+# Permissions
 RUN mkdir -p var/cache var/log && chmod -R 777 var/
 
-# Script de démarrage
 COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
 
 EXPOSE 8080
-
 CMD ["/start.sh"]
