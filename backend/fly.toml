@@ -1,23 +1,39 @@
-# fly.toml app configuration file generated for ecole-notre-dame-eqbsuw on 2026-04-25T20:47:35Z
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
+# fly.toml – Symfony 7 API – Ensemble Scolaire Notre-Dame Saint-Louis
+# App : ecole-notre-dame-eqbsuw
+# URL : https://ecole-notre-dame-eqbsuw.fly.dev
 
-app = 'ecole-notre-dame-eqbsuw'
+app            = 'ecole-notre-dame-eqbsuw'
 primary_region = 'cdg'
 
 [build]
+  dockerfile = "Dockerfile"
+
+[env]
+  APP_ENV   = "prod"
+  APP_DEBUG = "0"
 
 [http_service]
-  internal_port = 8080
-  force_https = true
-  auto_stop_machines = 'stop'
-  auto_start_machines = true
+  internal_port        = 8080
+  force_https          = true
+  auto_stop_machines   = 'stop'
+  auto_start_machines  = true
   min_machines_running = 0
-  processes = ['app']
+  processes            = ['app']
+
+  [http_service.concurrency]
+    type       = "requests"
+    soft_limit = 200
+    hard_limit = 250
+
+[[http_service.checks]]
+  grace_period = "15s"
+  interval     = "30s"
+  method       = "GET"
+  path         = "/api/health"
+  protocol     = "http"
+  timeout      = "10s"
 
 [[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
-  cpus = 1
+  cpu_kind  = 'shared'
+  cpus      = 1
   memory_mb = 256

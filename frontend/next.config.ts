@@ -3,18 +3,20 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
+      // Backend Fly.io (production)
+      {
+        protocol: 'https',
+        hostname: 'ecole-notre-dame-eqbsuw.fly.dev',
+        pathname: '/uploads/**',
+      },
+      // Backend local
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '8000',
+        port: '8080',
         pathname: '/uploads/**',
       },
-      {
-        protocol: 'https',
-        hostname: process.env.API_HOSTNAME ?? 'api.ndsl-mantes.fr',
-        pathname: '/uploads/**',
-      },
-      // Google / Microsoft avatars
+      // Avatars OAuth
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
       { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
     ],
@@ -23,7 +25,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/backend/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api'}/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api'}/:path*`,
       },
     ]
   },
