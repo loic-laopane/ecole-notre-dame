@@ -15,24 +15,23 @@ RUN docker-php-ext-install \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Copier TOUT le code source d'abord
-# (nécessaire pour que bin/console soit disponible pendant composer install)
+# Copier tout le code (bin/console doit exister avant composer install)
 COPY . .
 
-# Installer les dépendances
-# SYMFONY_SKIP_SCRIPTS désactive cache:clear et assets:install
-# mais laisse symfony/runtime générer autoload_runtime.php via son plugin
-RUN APP_ENV=prod SYMFONY_SKIP_SCRIPTS=1 composer install \
+# Installer les dépendances de production
+# Les scripts post-install ont été retirés du composer.json
+# car cache:clear nécessite une DB → erreur pendant le build Docker
+RUN APP_ENV=prod composer install \
     --no-dev \
     --no-interaction \
     --prefer-dist \
     --optimize-autoloader
 
-# Vérifier que les fichiers critiques sont présents
-RUN ls vendor/autoload.php && echo "✅ autoload.php OK" && \
-    ls vendor/autoload_runtime.php && echo "✅ autoload_runtime.php OK"
+# Vérifications
+RUN ls vendor/autoload.php && echo "✅ autoload.php OK"
+RUN ls vendor/autoload_runtime.php && echo "✅ autoload_runtime.php OK"
 
-# Permissions var/
+# Permissions
 RUN mkdir -p var/cache var/log && chmod -R 777 var/
 
 # Script de démarrage
