@@ -1,3 +1,22 @@
+# ── Stage 1 : build Composer ─────────────────────────────────────────────
+FROM composer:2 AS vendor
+
+WORKDIR /app
+
+# Copier uniquement les fichiers de dépendances pour profiter du cache Docker
+COPY composer.json composer.lock* ./
+
+# Installer les dépendances de production
+# --ignore-platform-reqs : évite les erreurs d'extensions manquantes dans l'image Composer
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --no-scripts \
+    --prefer-dist \
+    --optimize-autoloader \
+    --ignore-platform-reqs
+
+# ── Stage 2 : image finale ───────────────────────────────────────────────
 FROM php:8.3-cli-alpine
 
 WORKDIR /var/www/backend
@@ -19,23 +38,17 @@ RUN { \
     echo 'opcache.validate_timestamps=0'; \
 } >> /usr/local/etc/php/conf.d/opcache.ini
 
-# Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Copier le projet
+# Copier le code source
 COPY . .
 
-# Installer les dépendances (sans dev en prod)
-RUN composer install \
-    --no-interaction \
-    --no-dev \
-    --optimize-autoloader \
-    2>/dev/null || true
+# Copier le vendor/ depuis le stage de build
+# (on est sûr qu'il est complet et optimisé)
+COPY --from=vendor /app/vendor ./vendor
 
 # Permissions sur var/
 RUN mkdir -p var/cache var/log && chmod -R 777 var/
 
-# Script de démarrage : migrations + serveur sur port 8080
+# Script de démarrage
 COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
 
