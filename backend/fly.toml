@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for ecole-notre-dame on 2026-04-23T22:28:48Z
+# fly.toml app configuration file generated for ecole-notre-dame-long-fire-7305 on 2026-04-25T13:15:19Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'ecole-notre-dame'
+app = 'ecole-notre-dame-long-fire-7305'
 primary_region = 'cdg'
 
 [build]
