@@ -11,7 +11,6 @@ COPY composer.json composer.lock* ./
 RUN composer install \
     --no-dev \
     --no-interaction \
-    --no-scripts \
     --prefer-dist \
     --optimize-autoloader \
     --ignore-platform-reqs
