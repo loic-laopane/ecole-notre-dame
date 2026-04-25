@@ -1,53 +1,40 @@
 #!/bin/bash
 set -e
 
+# Toujours se placer dans le répertoire du projet
+cd /var/www/backend
+
 echo "=== NDSL Backend – Démarrage ==="
 echo "APP_ENV=${APP_ENV:-prod}"
-echo "PHP version: $(php -v | head -1)"
+echo "Répertoire: $(pwd)"
 
-# ── Vérifications ──────────────────────────────────────────
-if [ ! -f /var/www/backend/vendor/autoload.php ]; then
-    echo "❌ FATAL: vendor/autoload.php introuvable"
-    echo "   Le composer install a échoué pendant le build Docker"
-    exit 1
-fi
-echo "✅ vendor/autoload.php OK"
+# Vérifications
+[ -f vendor/autoload.php ]         && echo "✅ autoload.php OK"         || { echo "❌ autoload.php manquant"; exit 1; }
+[ -f vendor/autoload_runtime.php ] && echo "✅ autoload_runtime.php OK" || { echo "❌ autoload_runtime.php manquant"; exit 1; }
+[ -f bin/console ]                 && echo "✅ bin/console OK"          || { echo "❌ bin/console manquant"; exit 1; }
 
-if [ ! -f /var/www/backend/vendor/autoload_runtime.php ]; then
-    echo "❌ FATAL: vendor/autoload_runtime.php introuvable"
-    echo "   Symfony Runtime n'a pas été installé correctement"
-    ls /var/www/backend/vendor/ | head -20
-    exit 1
-fi
-echo "✅ vendor/autoload_runtime.php OK"
-
-# ── APP_SECRET obligatoire ──────────────────────────────────
+# APP_SECRET
 if [ -z "$APP_SECRET" ]; then
-    echo "⚠️  APP_SECRET non défini, génération d'une valeur temporaire"
     export APP_SECRET=$(php -r "echo bin2hex(random_bytes(16));")
+    echo "⚠️  APP_SECRET généré temporairement"
 fi
 
-# ── Cache warmup (optionnel en cas d'erreur) ────────────────
+# Cache warmup
 echo "🔥 Cache warmup..."
-php bin/console cache:warmup \
-    --env=${APP_ENV:-prod} \
-    --no-debug \
+php bin/console cache:warmup --env=${APP_ENV:-prod} --no-debug \
     && echo "✅ Cache OK" \
     || echo "⚠️  Cache warmup échoué (non bloquant)"
 
-# ── Migrations ──────────────────────────────────────────────
+# Migrations
 if [ -n "$DATABASE_URL" ]; then
     echo "🔄 Migrations..."
     php bin/console doctrine:migrations:migrate \
-        --no-interaction \
-        --allow-no-migration \
-        --env=${APP_ENV:-prod} \
+        --no-interaction --allow-no-migration --env=${APP_ENV:-prod} \
         && echo "✅ Migrations OK" \
         || echo "⚠️  Migrations échouées (non bloquant)"
 else
     echo "⚠️  DATABASE_URL non défini — migrations ignorées"
 fi
 
-# ── Démarrage serveur ────────────────────────────────────────
-echo "🚀 Démarrage PHP built-in server sur 0.0.0.0:8080..."
+echo "🚀 Démarrage PHP sur 0.0.0.0:8080..."
 exec php -S 0.0.0.0:8080 -t public

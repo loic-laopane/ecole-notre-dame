@@ -15,27 +15,27 @@ RUN docker-php-ext-install \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Copier composer.json/lock
-COPY composer.json composer.lock* ./
+# Copier TOUT le code source d'abord
+# (nécessaire pour que bin/console soit disponible pendant composer install)
+COPY . .
 
-# Étape 1 : installer sans scripts applicatifs
-# SYMFONY_SKIP_SCRIPTS=1 désactive cache:clear et assets:install
-# mais laisse tourner les plugins (symfony/runtime → autoload_runtime.php)
-RUN SYMFONY_SKIP_SCRIPTS=1 APP_ENV=prod composer install \
+# Installer les dépendances
+# SYMFONY_SKIP_SCRIPTS désactive cache:clear et assets:install
+# mais laisse symfony/runtime générer autoload_runtime.php via son plugin
+RUN APP_ENV=prod SYMFONY_SKIP_SCRIPTS=1 composer install \
     --no-dev \
     --no-interaction \
     --prefer-dist \
     --optimize-autoloader
 
-# Copier le reste du code
-COPY . .
+# Vérifier que les fichiers critiques sont présents
+RUN ls vendor/autoload.php && echo "✅ autoload.php OK" && \
+    ls vendor/autoload_runtime.php && echo "✅ autoload_runtime.php OK"
 
-# Vérification
-RUN ls vendor/autoload*.php && echo "✅ Autoload files OK"
-
-# Permissions
+# Permissions var/
 RUN mkdir -p var/cache var/log && chmod -R 777 var/
 
+# Script de démarrage
 COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
 
