@@ -1,0 +1,11 @@
+.git
+.github
+var/cache
+var/log
+vendor
+.env.local
+.env.*.local
+*.md
+tests/
+docker-compose*.yml
+.DS_Store
