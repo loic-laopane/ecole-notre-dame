@@ -40,5 +40,6 @@ RUN chmod +x /start.sh
 
 # Railway injecte $PORT au runtime ; 8080 est le fallback local
 ENV PORT=8080
+ENV APP_ENV=prod
 EXPOSE ${PORT}
 CMD ["/start.sh"]
