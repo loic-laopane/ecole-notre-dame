@@ -47,6 +47,15 @@ else
     echo "⚠️  DATABASE_URL non défini — migrations ignorées"
 fi
 
+# Création admin au premier démarrage (via variables ADMIN_EMAIL + ADMIN_PASSWORD)
+# Une fois le compte créé, supprimer ces variables dans Railway.
+if [ -n "$ADMIN_EMAIL" ] && [ -n "$ADMIN_PASSWORD" ]; then
+    echo "👤 Création/mise à jour admin : $ADMIN_EMAIL"
+    php bin/console app:create-admin "$ADMIN_EMAIL" "$ADMIN_PASSWORD" --env=${APP_ENV:-prod} \
+        && echo "✅ Admin OK" \
+        || echo "⚠️  Création admin échouée (non bloquant)"
+fi
+
 # Railway injecte $PORT ; fallback à 8080 pour les autres environnements
 PORT=${PORT:-8080}
 echo "🚀 Démarrage PHP sur 0.0.0.0:${PORT}..."
