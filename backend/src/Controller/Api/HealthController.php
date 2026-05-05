@@ -4,13 +4,17 @@ namespace App\Controller\Api;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * Health check endpoint utilisé par Fly.io pour vérifier que l'app est vivante.
- */
 class HealthController extends AbstractController
 {
+    #[Route('/', name: 'api_root', methods: ['GET'])]
+    public function root(): RedirectResponse
+    {
+        return $this->redirect('/api');
+    }
+
     #[Route('/api/health', name: 'api_health', methods: ['GET'])]
     public function health(): JsonResponse
     {
