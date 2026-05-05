@@ -27,6 +27,10 @@ RUN APP_ENV=prod composer install \
     --prefer-dist \
     --optimize-autoloader
 
+# Assets des bundles (EasyAdmin CSS/JS → public/bundles/)
+# Doit tourner avant le cache warmup pour que les chemins soient corrects.
+RUN APP_ENV=prod APP_SECRET=build-placeholder php bin/console assets:install --no-debug
+
 # Vérifications
 RUN ls vendor/autoload.php && echo "✅ autoload.php OK"
 RUN ls vendor/autoload_runtime.php && echo "✅ autoload_runtime.php OK"

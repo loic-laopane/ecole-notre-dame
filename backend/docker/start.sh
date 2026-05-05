@@ -30,6 +30,12 @@ if [ -n "$JWT_SECRET_KEY_BASE64" ] && [ -n "$JWT_PUBLIC_KEY_BASE64" ]; then
     echo "✅ Clés JWT chargées depuis les variables base64"
 fi
 
+# Assets des bundles (EasyAdmin CSS/JS → public/bundles/)
+echo "📦 Assets..."
+php bin/console assets:install --env=${APP_ENV:-prod} --no-debug \
+    && echo "✅ Assets OK" \
+    || echo "⚠️  assets:install échoué (non bloquant)"
+
 # Cache warmup
 echo "🔥 Cache warmup..."
 php bin/console cache:warmup --env=${APP_ENV:-prod} --no-debug \
