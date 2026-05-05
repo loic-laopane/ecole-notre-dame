@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-# Toujours se placer dans le répertoire du projet
 cd /var/www/backend
 
 echo "=== NDSL Backend – Démarrage ==="
@@ -17,6 +16,18 @@ echo "Répertoire: $(pwd)"
 if [ -z "$APP_SECRET" ]; then
     export APP_SECRET=$(php -r "echo bin2hex(random_bytes(16));")
     echo "⚠️  APP_SECRET généré temporairement"
+fi
+
+# Clés JWT : supporte deux modes
+#   - Fichiers .pem via JWT_SECRET_KEY / JWT_PUBLIC_KEY (chemin)
+#   - Contenu base64 via JWT_SECRET_KEY_BASE64 / JWT_PUBLIC_KEY_BASE64 (Railway/CI)
+if [ -n "$JWT_SECRET_KEY_BASE64" ] && [ -n "$JWT_PUBLIC_KEY_BASE64" ]; then
+    mkdir -p /tmp/jwt
+    echo "$JWT_SECRET_KEY_BASE64" | base64 -d > /tmp/jwt/private.pem
+    echo "$JWT_PUBLIC_KEY_BASE64" | base64 -d > /tmp/jwt/public.pem
+    export JWT_SECRET_KEY=/tmp/jwt/private.pem
+    export JWT_PUBLIC_KEY=/tmp/jwt/public.pem
+    echo "✅ Clés JWT chargées depuis les variables base64"
 fi
 
 # Cache warmup
@@ -36,5 +47,7 @@ else
     echo "⚠️  DATABASE_URL non défini — migrations ignorées"
 fi
 
-echo "🚀 Démarrage PHP sur 0.0.0.0:8080..."
-exec php -S 0.0.0.0:8080 -t public
+# Railway injecte $PORT ; fallback à 8080 pour les autres environnements
+PORT=${PORT:-8080}
+echo "🚀 Démarrage PHP sur 0.0.0.0:${PORT}..."
+exec php -S 0.0.0.0:${PORT} -t public
