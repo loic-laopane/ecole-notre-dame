@@ -28,7 +28,7 @@ export default function ProgrammesSection({ etablissements }: { etablissements: 
 
   const cards = etablissements.length
     ? etablissements.map(e => ({
-        icon: (e as any).icon ?? '🏫',
+        icon: e.icon ?? '🏫',
         title: e.name,
         desc: e.excerpt ?? '',
         niveau: e.niveau,

@@ -38,5 +38,7 @@ RUN mkdir -p var/cache var/log && chmod -R 777 var/
 COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 8080
+# Railway injecte $PORT au runtime ; 8080 est le fallback local
+ENV PORT=8080
+EXPOSE ${PORT}
 CMD ["/start.sh"]

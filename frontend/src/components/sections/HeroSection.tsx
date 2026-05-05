@@ -95,10 +95,10 @@ export default function HeroSection({ etablissements }: Props) {
                            transition-all hover:bg-cream hover:border-border"
               >
                 <span className={`w-[9px] h-[9px] rounded-full flex-shrink-0 ${
-                  DOT_COLORS[(e as any).colorDot ?? FALLBACK_ETABS[i % 4].colorDot] ?? 'bg-gold'
+                  DOT_COLORS[(e.colorDot ?? FALLBACK_ETABS[i % 4].colorDot) ?? ''] ?? 'bg-gold'
                 }`} />
                 <span className="text-navy text-[.88rem] font-medium flex-1">{e.name}</span>
-                <small className="text-muted text-[.72rem]">{(e as any).city ?? ''}</small>
+                <small className="text-muted text-[.72rem]">{e.city ?? ''}</small>
                 <span className="text-muted text-[.8rem]">›</span>
               </Link>
             ))}
