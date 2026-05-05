@@ -50,4 +50,6 @@ fi
 # Railway injecte $PORT ; fallback à 8080 pour les autres environnements
 PORT=${PORT:-8080}
 echo "🚀 Démarrage PHP sur 0.0.0.0:${PORT}..."
-exec php -S 0.0.0.0:${PORT} -t public
+# public/router.php est indispensable : php -S ne réécrit pas les URLs vers index.php
+# sans lui, toutes les routes Symfony (/api/*) retournent 404.
+exec php -S 0.0.0.0:${PORT} -t public public/router.php
